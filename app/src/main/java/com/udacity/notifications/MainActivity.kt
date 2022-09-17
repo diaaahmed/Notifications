@@ -43,13 +43,20 @@ class MainActivity : AppCompatActivity()
 
         var largeIcon = BitmapFactory.decodeResource(resources,R.drawable.test)
 
+        // Style for image
+        val bigPicStyle = NotificationCompat.BigPictureStyle()
+            .bigPicture(largeIcon)
+            .bigLargeIcon(null)
+
 
         var notification = NotificationCompat.Builder(this,App.CHANNEL_ID)
             .setSmallIcon(R.drawable.alert)
             .setContentTitle("Channel 1 test")
             .setContentText("Message")
             .setLargeIcon(largeIcon)
+            .setStyle(bigPicStyle)
             .setColor(Color.MAGENTA)
+            .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setContentIntent(pending_intent)
@@ -65,6 +72,7 @@ class MainActivity : AppCompatActivity()
             .setContentTitle("Channel 2 test")
             .setContentText("Message channel2")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .build()
 
