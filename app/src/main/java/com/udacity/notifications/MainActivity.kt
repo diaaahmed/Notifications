@@ -1,11 +1,12 @@
 package com.udacity.notifications
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.udacity.notifications.databinding.ActivityMainBinding
@@ -29,17 +30,18 @@ class MainActivity : AppCompatActivity()
         }
 
         ui.sendChannel2.setOnClickListener{
-            sendChannel2()
+           startActivity(Intent(this,NotificationProgress::class.java))
         }
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun sendChannel1()
     {
 
         var intent = Intent(this,MainActivity::class.java)
 
         var pending_intent = PendingIntent.getActivity(this,
-        0,intent,PendingIntent.FLAG_IMMUTABLE)
+        0,intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         var largeIcon = BitmapFactory.decodeResource(resources,R.drawable.test)
 
