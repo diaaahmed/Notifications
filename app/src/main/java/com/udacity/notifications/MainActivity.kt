@@ -5,7 +5,11 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -26,6 +30,7 @@ class MainActivity : AppCompatActivity()
         compat = NotificationManagerCompat.from(this)
 
         ui.sendChannel1.setOnClickListener{
+
             sendChannel1()
         }
 
@@ -37,34 +42,42 @@ class MainActivity : AppCompatActivity()
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun sendChannel1()
     {
+        if(!compat.areNotificationsEnabled())
+        {
+            openNotificationSetting()
+        }
+        else
+        {
+            var intent = Intent(this,MainActivity::class.java)
 
-        var intent = Intent(this,MainActivity::class.java)
+            var pending_intent = PendingIntent.getActivity(this,
+                0,intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        var pending_intent = PendingIntent.getActivity(this,
-        0,intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            var largeIcon = BitmapFactory.decodeResource(resources,R.drawable.test)
 
-        var largeIcon = BitmapFactory.decodeResource(resources,R.drawable.test)
-
-        // Style for image
-        val bigPicStyle = NotificationCompat.BigPictureStyle()
-            .bigPicture(largeIcon)
-            .bigLargeIcon(null)
+            // Style for image
+            val bigPicStyle = NotificationCompat.BigPictureStyle()
+                .bigPicture(largeIcon)
+                .bigLargeIcon(null)
 
 
-        var notification = NotificationCompat.Builder(this,App.CHANNEL_ID)
-            .setSmallIcon(R.drawable.alert)
-            .setContentTitle("Channel 1 test")
-            .setContentText("Message")
-            .setLargeIcon(largeIcon)
-            .setStyle(bigPicStyle)
-            .setColor(Color.MAGENTA)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setContentIntent(pending_intent)
-            .build()
+            var notification = NotificationCompat.Builder(this,App.CHANNEL_ID)
+                .setSmallIcon(R.drawable.alert)
+                .setContentTitle("Channel 1 test")
+                .setContentText("Message")
+                .setLargeIcon(largeIcon)
+                .setStyle(bigPicStyle)
+                .setColor(Color.MAGENTA)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setContentIntent(pending_intent)
+                .build()
 
-        compat.notify(1,notification)
+            compat.notify(1,notification)
+        }
+
+
     }
 
     private fun sendChannel2()
@@ -79,5 +92,21 @@ class MainActivity : AppCompatActivity()
             .build()
 
         compat.notify(2,notification)
+    }
+
+    private fun openNotificationSetting()
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            var intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE,packageName)
+            startActivity(intent)
+        }
+        else
+        {
+            var intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.setData(Uri.parse("package:"+packageName))
+            startActivity(intent)
+        }
     }
 }
